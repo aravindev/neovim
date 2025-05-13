@@ -1,18 +1,6 @@
 require("nvchad.configs.lspconfig").defaults()
 
-local lspconfig = require "lspconfig"
-
 local servers = { "pyright", "clangd" }
-local nvlsp = require "nvchad.configs.lspconfig"
-
--- lsps with default config
-for _, lsp in ipairs(servers) do
-  lspconfig[lsp].setup {
-    on_attach = nvlsp.on_attach,
-    on_init = nvlsp.on_init,
-    capabilities = nvlsp.capabilities,
-  }
-end
 
 local util = require "lspconfig/util"
 local path = util.path
@@ -31,13 +19,15 @@ local function get_python_path()
   return "python"
 end
 
-lspconfig.pyright.setup {
-  before_init = function(_, config)
-    config.settings.python.pythonPath = get_python_path()
-  end,
+vim.lsp.config.pyright = {
+  -- before_init = function(_, config)
+  --   config.settings.python.pythonPath = get_python_path()
+  -- end,
+  root_markers = { "pyproject.toml" }, -- disabed setup.py etc since it breaks AutoALMA detecting omni. packages
   settings = {
     pyright = {},
     python = {
+      pythonPath = get_python_path(),
       analysis = {
         autoImportCompletion = true,
         autoSearchPaths = true,
@@ -50,21 +40,12 @@ lspconfig.pyright.setup {
 }
 
 -- Clangd
-lspconfig.clangd.setup {
-  cmd = { "/usr/bin/clangd" },
-  filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto", "h", "hpp" },
-  root_dir = lspconfig.util.root_pattern(
-    ".clangd",
-    ".clang-tidy",
-    ".clang-format",
-    "compile_commands.json",
-    "compile_flags.txt",
-    "configure.ac",
-    ".git"
-  ),
-  single_file_support = true,
+vim.lsp.config.clangd = {
+  cmd = { "clangd", "--clang-tidy", "--background-index", "--offset-encoding=utf-8", "--cross-file-rename" },
+  root_markers = { ".clangd", ".compile_commands.json" },
+  filetypes = { "c", "cpp" },
 }
-local servers = { "html", "cssls" }
+
 vim.lsp.enable(servers)
 
--- read :h vim.lsp.config for changing options of lsp servers 
+-- read :h vim.lsp.config for changing options of lsp servers

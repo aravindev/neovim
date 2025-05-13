@@ -1,36 +1,9 @@
 local plugins = {
-  { import = "nvchad.blink.lazyspec" },
   {
     "stevearc/conform.nvim",
     event = "BufWritePre", -- uncomment for format on save
     opts = require "configs.conform",
   },
-
-  -- These are some examples, uncomment them if you want to see them work!
-
-  -- {
-  --   "hrsh7th/nvim-cmp",
-  --   opts = function()
-  --     local opts = require "nvchad.configs.cmp"
-  --     local cmp = require "cmp"
-  --     opts.mapping["C-Space"] = cmp.mapping.complete()
-  --     -- opts.mapping["<S-Tab>"] = nil
-  --     -- opts.mapping["<Tab>"] = nil
-  --     opts.completion.autocomplete = false
-  --     opts.sources = {
-  --       {
-  --         name = "nvim_lsp",
-  --         entry_filter = function(entry)
-  --           return require("cmp").lsp.CompletionItemKind.Snippet ~= entry:get_kind()
-  --         end,
-  --       },
-  --       { name = "buffer" },
-  --       { name = "nvim_lua" },
-  --       { name = "path" },
-  --     }
-  --     return opts
-  --   end,
-  -- },
 
   {
     "neovim/nvim-lspconfig",
@@ -51,7 +24,7 @@ local plugins = {
       "rcarriga/nvim-dap-ui",
       "theHamsta/nvim-dap-virtual-text",
     },
-    config = function(_, opts)
+    config = function(_, _)
       local path = "~/.local/share/nvim/mason/packages/debugpy/venv/bin/python"
       require("dap-python").setup(path)
     end,
@@ -104,12 +77,6 @@ local plugins = {
       dap.listeners.after.event_initialized.dapui_config = function()
         dapui.open()
       end
-      -- dap.listeners.before.event_terminated.dapui_config = function()
-      --   dapui.close()
-      -- end
-      -- dap.listeners.before.event_exited.dapui_config = function()
-      --   dapui.close()
-      -- end
     end,
   },
 
@@ -165,7 +132,7 @@ local plugins = {
         "lua-language-server",
         "stylua",
         -- "ruff-lsp",
-        "flake8",
+        -- "flake8",
         "pyright",
         "black",
         "isort",
@@ -191,32 +158,13 @@ local plugins = {
     "CopilotC-Nvim/CopilotChat.nvim",
     opts = {
       model = "claude-3.7-sonnet", -- GPT model to use, 'gpt-3.5-turbo', 'gpt-4', or 'gpt-4o'
-      language = "English", -- Copilot answer language settings when using default prompts. Default language is English.
-      -- proxy = "socks5://127.0.0.1:3000", -- Proxies requests via https or socks.
-      -- temperature = 0.1,
       mappings = {
         submit_prompt = {
-          normal = "<CR>",
           insert = "<C-CR>",
         },
       },
     },
     build = "make tiktoken",
-    config = function(_, opts)
-      require("CopilotChat").setup(opts)
-      vim.api.nvim_create_autocmd("BufEnter", {
-        pattern = "copilot-*",
-        callback = function()
-          vim.opt.completeopt = vim.opt.completeopt + "noinsert" + "noselect"
-        end,
-      })
-      vim.api.nvim_create_autocmd("BufLeave", {
-        pattern = "copilot-*",
-        callback = function()
-          vim.opt.completeopt = vim.opt.completeopt - "noinsert" - "noselect"
-        end,
-      })
-    end,
     -- function()
     --   vim.notify "Please update the remote plugins by running ':UpdateRemotePlugins', then restart Neovim."
     -- end,
@@ -391,46 +339,41 @@ local plugins = {
   {
     "Saghen/blink.cmp",
     dependencies = { "rcarriga/cmp-dap" },
-    opts = {
-      enabled = function()
-        return vim.api.nvim_get_option_value("buftype", {}) ~= "prompt" or require("cmp_dap").is_dap_buffer()
-      end,
-      sources = {
-        per_filetype = {
-          ["dap-repl"] = { "dap", score_offset = 200 },
-          ["dapui_watches"] = { "dap", score_offset = 200 },
-          ["dapui_hover"] = { "dap", score_offset = 200 },
+    config = function()
+      require("blink.cmp").setup {
+        enabled = function()
+          return vim.api.nvim_get_option_value("buftype", {}) ~= "prompt" or require("cmp_dap").is_dap_buffer()
+        end,
+        sources = {
+          per_filetype = {
+            ["dap-repl"] = { "dap", score_offset = 200 },
+            ["dapui_watches"] = { "dap", score_offset = 200 },
+            ["dapui_hover"] = { "dap", score_offset = 200 },
+          },
+          providers = {
+            dap = { name = "dap", module = "blink.compat.source" },
+          },
         },
-      },
-    },
+        completion = {
+          ghost_text = {
+            enabled = false,
+          },
+          list = {
+            selection = {
+              preselect = false,
+            },
+          },
+        },
+      }
+    end,
   },
   {
     "rcarriga/cmp-dap",
     lazy = false,
-    config = function()
-      -- require("cmp").setup {
-      --   enabled = function()
-      --     return vim.api.nvim_get_option_value("buftype", {}) ~= "prompt" or require("cmp_dap").is_dap_buffer()
-      --   end,
-      -- require("cmp").setup.filetype({ "dap-repl", "dapui_watches", "dapui_hover" }, {
-      --   sources = {
-      --     { name = "dap" },
-      --   },
-      -- })
-    end,
+    config = function() end,
   },
   -- test new blink
-  -- { import = "nvchad.blink.lazyspec" },
-
-  -- {
-  -- 	"nvim-treesitter/nvim-treesitter",
-  -- 	opts = {
-  -- 		ensure_installed = {
-  -- 			"vim", "lua", "vimdoc",
-  --      "html", "css"
-  -- 		},
-  -- 	},
-  -- },
+  { import = "nvchad.blink.lazyspec" },
 }
 
 return plugins

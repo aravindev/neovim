@@ -153,8 +153,12 @@ map("n", "<leader>fs", function()
 end, { desc = "Telescope LSP Workspace Symbols" })
 
 -- open diagnostics float and go to next diagnostic
-map("n", "]d", vim.diagnostic.goto_next, { desc = "LSP Next Diagnostic" })
-map("n", "[d", vim.diagnostic.goto_prev, { desc = "LSP Previous Diagnostic" })
+map("n", "]d", function()
+  vim.diagnostic.jump { count = 1, float = true }
+end, { desc = "LSP Next Diagnostic" })
+map("n", "[d", function()
+  vim.diagnostic.jump { count = -1, float = true }
+end, { desc = "LSP Previous Diagnostic" })
 
 -- set current buffer folder as workspace using vim.lsp.buf.add_workspace_folder
 map("n", "<leader>sw", function()
@@ -172,7 +176,7 @@ map("n", "<leader>fc", vim.lsp.buf.format, { desc = "Format Code" })
 -- LAZYGIT
 local function getRelativeFilepath(retries, delay)
   local relative_filepath
-  for i = 1, retries do
+  for _ = 1, retries do
     relative_filepath = vim.fn.getreg "+"
     if relative_filepath ~= "" then
       return relative_filepath -- Return filepath if clipboard is not empty
@@ -260,13 +264,6 @@ end, { desc = "Git buffer diff to write" })
 
 -- Setup keymaps
 map("n", "K", require("hover").hover, { desc = "hover.nvim" })
--- map("n", "gK", require("hover").hover_select, { desc = "hover.nvim (select)" })
--- map("n", "<C-p>", function()
---   require("hover").hover_switch "previous"
--- end, { desc = "hover.nvim (previous source)" })
--- map("n", "<C-n>", function()
---   require("hover").hover_switch "next"
--- end, { desc = "hover.nvim (next source)" })
 
 -- Mouse support
 map("n", "<MouseMove>", require("hover").hover_mouse, { desc = "hover.nvim (mouse)" })
