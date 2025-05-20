@@ -11,22 +11,6 @@ vim.cmd [[command! DiffOrig if &diff | diffupdate | else | vert new | set buftyp
 -- Code naviation using Ctrl-I/O. Avoid removing deleted buffers from jumplist (https://github.com/neovim/neovim/issues/25365)
 vim.o.jumpoptions = ""
 
--- folding https://essais.co/better-folding-in-neovim/
-
-vim.o.foldmethod = "indent"
-vim.o.foldenable = true
-vim.o.foldlevel = 99
-vim.opt.fillchars = { fold = "\\" } -- The backslash escapes a space
-vim.o.foldtext = "CustomFoldText()"
-function CustomFoldText()
-  local indentation = vim.fn.indent(vim.v.foldstart - 1)
-  local foldSize = 1 + vim.v.foldend - vim.v.foldstart
-  local foldSizeStr = " " .. foldSize .. " lines "
-  local foldLevelStr = string.rep("+--", vim.v.foldlevel)
-  local expansionString = string.rep(" ", indentation)
-  return expansionString .. foldLevelStr .. foldSizeStr
-end
-
 -- Show Nvdash home screen when all buffers are closed
 vim.api.nvim_create_autocmd("BufDelete", {
   callback = function()
@@ -177,3 +161,20 @@ vim.api.nvim_create_autocmd("VimResized", {
 })
 
 -- end of diagnostics config
+
+-- NvimTree auto-find file on buffer enter
+local api = require "nvim-tree.api"
+
+vim.api.nvim_create_autocmd("BufEnter", {
+  nested = true,
+  callback = function()
+    if vim.fn.bufname() == "NvimTree_1" then
+      return
+    end
+    api.tree.find_file { buf = vim.fn.bufnr() }
+  end,
+})
+
+-- Disable NvimTree background color for readability
+vim.cmd [[hi NvimTreeNormal guibg=NONE ctermbg=NONE]]
+vim.cmd [[hi NvimTreeNormalNC guibg=NONE ctermbg=NONE]]

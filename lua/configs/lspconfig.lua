@@ -20,10 +20,26 @@ local function get_python_path()
 end
 
 vim.lsp.config.pyright = {
-  -- before_init = function(_, config)
-  --   config.settings.python.pythonPath = get_python_path()
-  -- end,
-  root_markers = { "pyproject.toml" }, -- disabed setup.py etc since it breaks AutoALMA detecting omni. packages
+  -- Set root directory according to the following rules:
+  -- 1. If the file path contains "AutoALMA" but not "AutoALMA/dependencies", set the root to "AutoALMA".
+  -- 2. Otherwise, use the default root detection mechanism.
+  root_dir = function(bufnr, on_dir)
+    local filepath = vim.api.nvim_buf_get_name(bufnr)
+
+    -- Check if file path contains AutoALMA but not AutoALMA/dependencies
+    local autoalma_pos = string.find(filepath, "AutoALMA")
+    if autoalma_pos and not string.find(filepath, "AutoALMA/dependencies") then
+      -- Extract the path up to and including "AutoALMA"
+      local autoalma_root = string.sub(filepath, 1, autoalma_pos + #"AutoALMA" - 1)
+      on_dir(autoalma_root)
+    else
+      -- For other cases, use the default root detection mechanism
+      -- Use util.root_pattern to find the root based on markers
+      local util = require "lspconfig.util"
+      local root = util.root_pattern(".git", "setup.py", "pyproject.toml", "requirements.txt")(filepath)
+      on_dir(root)
+    end
+  end,
   settings = {
     pyright = {},
     python = {
@@ -45,6 +61,20 @@ vim.lsp.config.clangd = {
   root_markers = { ".clangd", ".compile_commands.json" },
   filetypes = { "c", "cpp" },
 }
+
+-- We do this for UFO which takes care of folding
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.foldingRange = {
+  dynamicRegistration = false,
+  lineFoldingOnly = true,
+}
+local language_servers = vim.lsp.get_clients() -- or list servers manually like {'gopls', 'clangd'}
+for _, ls in ipairs(language_servers) do
+  require("lspconfig")[ls].setup {
+    capabilities = capabilities,
+    -- you can add other fields for setting up lsp server in this table
+  }
+end
 
 vim.lsp.enable(servers)
 

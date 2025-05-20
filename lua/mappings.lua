@@ -45,12 +45,18 @@ map("n", "<leader>dc", require("dapui").close, { desc = "DAP Close window" })
 map("n", "<leader>drf", require("dap-python").test_method, { desc = "DAP Test method" })
 map("n", "<leader>drc", require("dap-python").test_class, { desc = "DAP Test class" })
 map("n", "<leader>drs", require("dap-python").debug_selection, { desc = "DAP Debug selection" })
-map({ "n", "i" }, "<F9>", require("dap").continue, { desc = "DAP Continue" })
+map({ "n", "i" }, "<F9>", function()
+  vim.diagnostic.reset()
+  require("dap").continue()
+end, { desc = "DAP Continue" })
 map({ "n", "i" }, "<F10>", require("dap").step_over, { desc = "DAP Step over" })
 map({ "n", "i" }, "<leader><F10>", require("dap").step_into, { desc = "DAP Step into" })
 map({ "n", "i" }, "<F8>", require("dap").step_out, { desc = "DAP Step out" })
 map({ "n", "i" }, "<leader><F9>", require("dap").terminate, { desc = "DAP Terminate" })
-map({ "n", "i" }, "<leader><F8>", require("dap").run_last, { desc = "DAP Restart" })
+map({ "n", "i" }, "<leader><F8>", function()
+  vim.diagnostic.reset()
+  require("dap").run_last()
+end, { desc = "DAP Restart" })
 
 map("n", "<leader>def", function()
   require("dapui").float_element(nil, { enter = true })
@@ -109,13 +115,38 @@ map("n", "<leader>dl", function()
   -- recursively look for launch.json files in root directory and pass the first one to load_launchjs
   local project_root_dir = vim.fn.getcwd()
   local launch_json = vim.fn.systemlist("find " .. project_root_dir .. " -name launch.json")[1]
-  if launch_json == nil then
-    print("No launch.json found in project root: " .. project_root_dir)
-    return
+  vim.diagnostic.reset()
+
+  if launch_json ~= nil then
+    print("Found launch.json at: " .. launch_json)
+    require("dap.ext.vscode").load_launchjs(launch_json)
+    require("telescope").extensions.dap.configurations()
+  else
+    print "No launch.json found, setting up default Python configuration"
+
+    -- Setup default Python configuration
+    local dap = require "dap"
+    if not dap.adapters.python then
+      dap.adapters.python = {
+        type = "executable",
+        command = "python",
+        args = { "-m", "debugpy.adapter" },
+      }
+      dap.configurations.python = {
+        {
+          type = "python",
+          request = "launch",
+          name = "Launch current file",
+          program = "${file}",
+          pythonPath = function()
+            return vim.fn.exepath "python"
+          end,
+        },
+      }
+    end
+
+    require("telescope").extensions.dap.configurations()
   end
-  print("Found launch.json at: " .. launch_json)
-  require("dap.ext.vscode").load_launchjs(launch_json)
-  require("telescope").extensions.dap.configurations()
 end, { desc = "Telescope DAP Configurations" })
 -- dap show frames
 map("n", "<leader>dff", function()
@@ -268,3 +299,9 @@ map("n", "K", require("hover").hover, { desc = "hover.nvim" })
 -- Mouse support
 map("n", "<MouseMove>", require("hover").hover_mouse, { desc = "hover.nvim (mouse)" })
 vim.o.mousemoveevent = true
+
+-- UFO for folding
+vim.keymap.set("n", "zR", require("ufo").openAllFolds)
+vim.keymap.set("n", "zM", require("ufo").closeAllFolds)
+vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds)
+vim.keymap.set("n", "zm", require("ufo").closeFoldsWith) -- closeAllFolds == closeFoldsWith(0)
