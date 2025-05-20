@@ -324,7 +324,7 @@ local plugins = {
         mouse_providers = {
           "LSP",
         },
-        mouse_delay = 1000,
+        mouse_delay = 2000,
       }
     end,
   },
@@ -432,6 +432,21 @@ local plugins = {
       require("ufo").setup {
         fold_virt_text_handler = handler,
       }
+    end,
+  },
+  {
+    "utilyre/barbecue.nvim",
+    dependencies = {
+      "SmiteshP/nvim-navic",
+      "nvim-tree/nvim-web-devicons",
+    },
+    lazy = false,
+    config = function()
+      require("barbecue").setup {
+        show_dirname = false,
+        show_basename = false,
+      }
+      require("barbecue.ui").toggle(true)
     end,
   },
   -- test new blink
