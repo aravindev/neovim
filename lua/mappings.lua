@@ -65,7 +65,7 @@ map("n", "m", function()
   require("dapui").eval()
 end, { desc = "DAP Evaluate expression" })
 map("n", "<leader>du", function()
-  require("dapui").toggle()
+  require("dapui").toggle { reset = true }
 end, { desc = "DAP Toggle Debugger UI" })
 map("n", "<leader>dx", function()
   require("dap.ui.widgets").hover()

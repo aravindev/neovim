@@ -75,7 +75,7 @@ local plugins = {
       }
 
       dap.listeners.after.event_initialized.dapui_config = function()
-        dapui.open()
+        dapui.open { reset = true }
       end
     end,
   },
@@ -339,6 +339,17 @@ local plugins = {
   {
     "Saghen/blink.cmp",
     dependencies = { "rcarriga/cmp-dap" },
+    opts = {
+      sources = {
+        providers = {
+          path = {
+            enabled = function()
+              return vim.bo.filetype ~= "copilot-chat"
+            end,
+          },
+        },
+      },
+    },
     config = function()
       require("blink.cmp").setup {
         enabled = function()

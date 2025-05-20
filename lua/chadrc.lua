@@ -31,7 +31,7 @@ M.term = {
   },
 }
 local function shorten_path(path)
-  local max_len = 60
+  local max_len = 100
   if #path > max_len then
     local first = path:sub(1, 1)
     local last = path:sub(-max_len + 5) -- Keep more of the end
