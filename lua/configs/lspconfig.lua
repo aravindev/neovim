@@ -68,12 +68,12 @@ capabilities.textDocument.foldingRange = {
   dynamicRegistration = false,
   lineFoldingOnly = true,
 }
-local language_servers = { "clangd", "pyright" } -- or list servers manually like {'gopls', 'clangd'}
-for _, ls in ipairs(language_servers) do
-  require("lspconfig")[ls].setup {
-    capabilities = capabilities,
-    -- you can add other fields for setting up lsp server in this table
-  }
+
+-- Add capabilities to server configurations
+for _, server in ipairs(servers) do
+  if vim.lsp.config[server] then
+    vim.lsp.config[server].capabilities = capabilities
+  end
 end
 
 vim.lsp.enable(servers)
