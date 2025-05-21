@@ -82,7 +82,6 @@ local plugins = {
 
   {
     "daic0r/dap-helper.nvim",
-    lazy = false,
     dependencies = { "rcarriga/nvim-dap-ui", "mfussenegger/nvim-dap" },
     config = function()
       require("dap-helper").setup()
@@ -226,7 +225,6 @@ local plugins = {
 
   {
     "stevearc/aerial.nvim",
-    lazy = false,
     opts = {},
     config = function()
       require("aerial").setup {
@@ -249,8 +247,6 @@ local plugins = {
           vim.keymap.set("n", "}", "<cmd>AerialNext<CR>", { buffer = bufnr })
         end,
       }
-      -- You probably also want to set a keymap to toggle aerial
-      vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>")
     end,
     -- Optional dependencies
     dependencies = {
@@ -362,6 +358,7 @@ local plugins = {
             ["dapui_hover"] = { "dap", score_offset = 200 },
           },
           providers = {
+            lsp = { min_keyword_length = 1, score_offset = 100 },
             dap = { name = "dap", module = "blink.compat.source" },
           },
         },
@@ -375,12 +372,16 @@ local plugins = {
             },
           },
         },
+        keymap = {
+          ["<Tab>"] = { "select_next", "fallback" },
+          ["<S-Tab>"] = { "select_prev", "fallback" },
+          ["<CR>"] = { "accept", "fallback" },
+        },
       }
     end,
   },
   {
     "rcarriga/cmp-dap",
-    lazy = false,
     config = function() end,
   },
   {
@@ -451,6 +452,8 @@ local plugins = {
   },
   -- test new blink
   { import = "nvchad.blink.lazyspec" },
+  { "L3MON4D3/LuaSnip", enabled = false },
+  { "rafamadriz/friendly-snippets", enabled = false },
 }
 
 return plugins
