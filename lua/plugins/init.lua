@@ -363,7 +363,7 @@ local plugins = {
   },
   {
     "Saghen/blink.cmp",
-    dependencies = { "rcarriga/cmp-dap" },
+    dependencies = { { "rcarriga/cmp-dap" }, { "micangl/cmp-vimtex" } },
     opts = {
       sources = {
         providers = {
@@ -381,6 +381,7 @@ local plugins = {
           return vim.api.nvim_get_option_value("buftype", {}) ~= "prompt" or require("cmp_dap").is_dap_buffer()
         end,
         sources = {
+          default = { "lsp", "path", "snippets", "buffer", "vimtex" },
           per_filetype = {
             ["dap-repl"] = { "dap", score_offset = 200 },
             ["dapui_watches"] = { "dap", score_offset = 200 },
@@ -389,6 +390,7 @@ local plugins = {
           providers = {
             lsp = { min_keyword_length = 1, score_offset = 100 },
             dap = { name = "dap", module = "blink.compat.source" },
+            vimtex = { name = "vimtex", module = "blink.compat.source", score_offset = 3 },
           },
         },
         completion = {
@@ -477,6 +479,36 @@ local plugins = {
         show_basename = false,
       }
       require("barbecue.ui").toggle(true)
+    end,
+  },
+  {
+    "micangl/cmp-vimtex",
+    ft = "tex",
+    config = function()
+      require("cmp_vimtex").setup {}
+    end,
+  },
+  {
+    "lervag/vimtex",
+    lazy = false,
+    -- tag = "v2.15", -- uncomment to pin to a specific release
+    init = function()
+      --global vimtex settings
+      vim.g.vimtex_imaps_enabled = 0 --i.e., disable them
+      vim.g.vimtex_compiler_latexmk = {
+        build_dir = "build",
+      }
+      --vimtex_view_settings
+      vim.g.vimtex_view_method = "zathura" -- change this, depending on what you want to use..sumatraPDF, or skim, or zathura, or...
+      vim.g.vimtex_view_general_options = "-reuse-instance -forward-search @tex @line @pdf"
+      --quickfix settings
+      vim.g.vimtex_quickfix_open_on_warning = 0 --  don't open quickfix if there are only warnings
+      vim.g.vimtex_quickfix_ignore_filters = {
+        "Underfull",
+        "Overfull",
+        "LaTeX Warning: .\\+ float specifier changed to",
+        "Package hyperref Warning: Token not allowed in a PDF string",
+      }
     end,
   },
   -- test new blink
