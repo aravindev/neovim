@@ -156,7 +156,42 @@ local plugins = {
   {
     "CopilotC-Nvim/CopilotChat.nvim",
     opts = {
-      model = "claude-3.7-sonnet", -- GPT model to use, 'gpt-3.5-turbo', 'gpt-4', or 'gpt-4o'
+      model = "claude-sonnet-4", -- GPT model to use, 'gpt-3.5-turbo', 'gpt-4', or 'gpt-4o'
+      selection = function(source)
+        local select = require "CopilotChat.select"
+        -- Try different selection methods and combine them
+        local selections = {}
+        local visual = select.visual(source)
+        -- visual selection at line visual.start_line to visual.end_line in file visual.filename:
+        if visual then
+          table.insert(
+            selections,
+            "Visual selection at line "
+              .. visual.start_line
+              .. " to "
+              .. visual.end_line
+              .. " in file: "
+              .. visual.filename
+          )
+          table.insert(selections, "Content:\n" .. visual.content)
+        end
+
+        local line = select.line(source)
+        if line then
+          table.insert(selections, "Current cursor line at " .. line.start_line .. " in file: " .. line.filename)
+          table.insert(selections, "Content:\n" .. line.content)
+        end
+
+        if #selections > 0 then
+          return {
+            content = table.concat(selections, "\n\n"),
+            filetype = (visual or line).filetype,
+            filename = (visual or line).filename,
+          }
+        end
+
+        return select.buffer(source)
+      end,
       mappings = {
         submit_prompt = {
           insert = "<C-CR>",
@@ -170,12 +205,6 @@ local plugins = {
     event = "VeryLazy",
     keys = {
       { "<leader>cct", ":CopilotChatToggle<cr>", desc = "CopilotChat - Toggle Chat" },
-      { "<leader>cce", "<cmd>CopilotChatExplain<cr>", desc = "CopilotChat - Explain code" },
-      { "<leader>ccr", "<cmd>CopilotChatReview<cr>", desc = "CopilotChat - Review code" },
-      { "<leader>ccd", "<cmd>CopilotChatDocs<cr>", desc = "CopilotChat - Generate doc" },
-      { "<leader>cco", "<cmd>CopilotChatOptimize<cr>", desc = "CopilotChat - Optimize code" },
-      { "<leader>cchf", "<cmd>CopilotChatFix<cr>", desc = "CopilotChat - Fix my code" },
-      { "<leader>cchd", "<cmd>CopilotChatFixDiagnostic<cr>", desc = "CopilotChat - Help with diagnostics" },
       { "<leader>ccT", "<cmd>CopilotChatTests<cr>", desc = "CopilotChat - Generate tests" },
       {
         "<leader>ccq",
@@ -454,6 +483,7 @@ local plugins = {
   { import = "nvchad.blink.lazyspec" },
   { "L3MON4D3/LuaSnip", enabled = false },
   { "rafamadriz/friendly-snippets", enabled = false },
+  { "windwp/nvim-autopairs", enabled = false },
 }
 
 return plugins
