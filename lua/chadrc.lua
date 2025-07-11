@@ -13,7 +13,24 @@ M.base46 = {
     -- this will use the black color from base46.theme & lighten it by 2x
     -- negative number will darken it
     Normal = {
-      bg = { "black", -14 },
+      bg = { "black", -40 },
+    },
+    -- For floating terminal background
+    NormalFloat = {
+      bg = { "black", -30 },
+    },
+    -- Fix NvimTree colors
+    NvimTreeNormal = {
+      bg = { "black", -50 },
+      fg = { "white", 10 },
+    },
+    NvimTreeNormalNC = {
+      bg = { "black", -50 },
+      fg = { "white", 10 },
+    },
+    NvimTreeWinSeparator = {
+      fg = { "grey", 0 },
+      bg = { "black", -35 },
     },
   },
 }
