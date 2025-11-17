@@ -27,16 +27,16 @@ vim.lsp.config.pyright = {
     local filepath = vim.api.nvim_buf_get_name(bufnr)
 
     -- Check if file path contains AutoALMA but not AutoALMA/dependencies
-    local autoalma_pos = string.find(filepath, "AutoALMA")
-    if autoalma_pos and not string.find(filepath, "AutoALMA/dependencies") then
+    local autoalma_start, autoalma_end = string.find(filepath:lower(), "autoalma[^/]*")
+    if autoalma_start and not string.find(filepath, "AutoALMA/dependencies") then
       -- Extract the path up to and including "AutoALMA"
-      local autoalma_root = string.sub(filepath, 1, autoalma_pos + #"AutoALMA" - 1)
+      local autoalma_root = string.sub(filepath, 1, autoalma_end)
       on_dir(autoalma_root)
     else
       -- For other cases, use the default root detection mechanism
       -- Use util.root_pattern to find the root based on markers
-      local util = require "lspconfig.util"
-      local root = util.root_pattern(".git", "setup.py", "pyproject.toml", "requirements.txt")(filepath)
+      local lsp_util = require "lspconfig.util"
+      local root = lsp_util.root_pattern(".git", "setup.py", "pyproject.toml", "requirements.txt")(filepath)
       on_dir(root)
     end
   end,
