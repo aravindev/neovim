@@ -12,7 +12,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- for autosession, to make sure filetype and highlight work correctly after a session restore, add localoptions to vim.o.sessionoptions
-vim.o.sessionoptions = vim.o.sessionoptions .. ",localoptions"
+vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
 
 local lazy_config = require "configs.lazy"
 -- lazy_config.defaults.version = "*"
