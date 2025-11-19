@@ -155,53 +155,44 @@ local plugins = {
 
   {
     "CopilotC-Nvim/CopilotChat.nvim",
+    dependencies = {
+      { "nvim-lua/plenary.nvim", branch = "master" },
+    },
+    build = "make tiktoken",
     opts = {
       model = "claude-sonnet-4", -- GPT model to use, 'gpt-3.5-turbo', 'gpt-4', or 'gpt-4o'
-      selection = function(source)
-        local select = require "CopilotChat.select"
-        -- Try different selection methods and combine them
-        local selections = {}
-        local visual = select.visual(source)
-        -- visual selection at line visual.start_line to visual.end_line in file visual.filename:
-        if visual then
-          table.insert(
-            selections,
-            "Visual selection at line "
-              .. visual.start_line
-              .. " to "
-              .. visual.end_line
-              .. " in file: "
-              .. visual.filename
-          )
-          table.insert(selections, "Content:\n" .. visual.content)
-        end
-
-        local line = select.line(source)
-        if line then
-          table.insert(selections, "Current cursor line at " .. line.start_line .. " in file: " .. line.filename)
-          table.insert(selections, "Content:\n" .. line.content)
-        end
-
-        if #selections > 0 then
-          return {
-            content = table.concat(selections, "\n\n"),
-            filetype = (visual or line).filetype,
-            filename = (visual or line).filename,
-          }
-        end
-
-        return select.buffer(source)
-      end,
+      temperature = 0.1,
+      sticky = { "#buffer", "#gitdiff", "#gitdiff:staged" },
+      auto_insert_mode = true,
+      window = {
+        layout = "vertical",
+        width = 0.5,
+      },
+      separator = "━━",
+      auto_fold = true, -- Automatically folds non-assistant messages
       mappings = {
         submit_prompt = {
           insert = "<C-CR>",
         },
       },
     },
-    build = "make tiktoken",
     -- function()
     --   vim.notify "Please update the remote plugins by running ':UpdateRemotePlugins', then restart Neovim."
     -- end,
+    config = function(_, opts)
+      require("CopilotChat").setup(opts)
+      -- Auto-command to customize chat buffer behavior
+      vim.api.nvim_create_autocmd("BufEnter", {
+        pattern = "copilot-*",
+        callback = function()
+          vim.opt_local.relativenumber = false
+          vim.opt_local.number = false
+          vim.opt_local.conceallevel = 0
+        end,
+      })
+      vim.api.nvim_set_hl(0, "CopilotChatHeader", { fg = "#7CFFFF", bold = true })
+      vim.api.nvim_set_hl(0, "CopilotChatSeparator", { fg = "#374151" })
+    end,
     event = "VeryLazy",
     keys = {
       { "<leader>cct", ":CopilotChatToggle<cr>", desc = "CopilotChat - Toggle Chat" },

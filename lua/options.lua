@@ -29,15 +29,6 @@ vim.schedule(function()
   }
 end)
 
--- Set the workspace folders for COPILOT
-vim.api.nvim_create_autocmd("VimEnter", {
-  pattern = "*",
-  callback = function()
-    local cwd = vim.fn.getcwd() -- Use getcwd to get the current working directory
-    vim.g.copilot_workspace_folders = { cwd } -- Set it to a list with the current directory
-  end,
-})
-
 -- See https://www.reddit.com/r/neovim/comments/1jstr7z/how_to_wrap_diagnostic_virtual_lines/
 -- start of diagnostics config
 -- Get the window id for a buffer
