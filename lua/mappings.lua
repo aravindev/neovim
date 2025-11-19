@@ -222,6 +222,9 @@ end, { desc = "LSP Next Diagnostic" })
 map("n", "[d", function()
   vim.diagnostic.jump { count = -1, float = true }
 end, { desc = "LSP Previous Diagnostic" })
+map("n", "<leader>td", function()
+  vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+end, { desc = "LSP Toggle Diagnostics" })
 
 -- set current buffer folder as workspace using vim.lsp.buf.add_workspace_folder
 map("n", "<leader>sw", function()
