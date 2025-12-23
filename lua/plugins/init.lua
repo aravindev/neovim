@@ -105,6 +105,7 @@ local plugins = {
       local opts = require "nvchad.configs.telescope"
       opts.defaults.path_display = { "truncate" }
       opts.defaults.layout_strategy = "vertical"
+      opts.defaults.file_ignore_patterns = { "%.svg$" }
       return opts
     end,
   },
@@ -160,10 +161,9 @@ local plugins = {
     },
     build = "make tiktoken",
     opts = {
-      model = "claude-sonnet-4", -- GPT model to use, 'gpt-3.5-turbo', 'gpt-4', or 'gpt-4o'
+      model = "claude-opus-4.5", -- GPT model to use, 'gpt-3.5-turbo', 'gpt-4', or 'gpt-4o'
       temperature = 0.1,
       sticky = { "#buffer", "#gitdiff", "#gitdiff:staged" },
-      auto_insert_mode = true,
       window = {
         layout = "vertical",
         width = 0.5,

@@ -140,8 +140,15 @@ map("v", "<leader>fg", function()
 end, { desc = "Telescope Grep String" })
 -- live grep in a specific directory
 map("n", "<leader>fa", function()
-  require("telescope.builtin").live_grep { prompt_title = "Live Grep" }
-end, { desc = "Telescope Search Git" })
+  local builtin = require "telescope.builtin"
+  builtin.grep_string {
+    shorten_path = true,
+    word_match = "-w",
+    only_sort_text = false,
+    search = "",
+    prompt_title = "Fuzzy Live Grep",
+  }
+end, { desc = "Telescope Fuzzy Search" })
 -- get dap configurations
 map("n", "<leader>dl", function()
   -- recursively look for launch.json files in root directory and pass the first one to load_launchjs
