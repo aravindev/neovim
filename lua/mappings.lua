@@ -260,7 +260,7 @@ local function getRelativeFilepath(retries, delay)
 end
 
 -- Function to handle editing from Lazygit
-function LazygitEdit(original_buffer)
+function LazygitEdit(original_buffer, git_root)
   local current_bufnr = vim.fn.bufnr "%"
   local channel_id = vim.fn.getbufvar(current_bufnr, "terminal_job_id")
 
@@ -286,7 +286,9 @@ function LazygitEdit(original_buffer)
   end
 
   vim.fn.win_gotoid(winid)
-  vim.cmd("e " .. relative_filepath)
+  -- Resolve path relative to the git root where lazygit was started
+  local full_path = git_root .. "/" .. relative_filepath
+  vim.cmd("e " .. full_path)
 end
 
 -- Function to start Lazygit in a floating terminal
@@ -323,7 +325,7 @@ function StartLazygit()
       term_bufnr,
       "t",
       "E",
-      string.format([[<cmd>lua LazygitEdit(%d)<CR>]], current_buffer),
+      string.format([[<cmd>lua LazygitEdit(%d, %q)<CR>]], current_buffer, git_root),
       { noremap = true, silent = true }
     )
   end)
