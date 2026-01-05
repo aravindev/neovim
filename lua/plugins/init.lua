@@ -161,9 +161,9 @@ local plugins = {
     },
     build = "make tiktoken",
     opts = {
-      model = "claude-opus-4.5", -- GPT model to use, 'gpt-3.5-turbo', 'gpt-4', or 'gpt-4o'
+      model = "claude-haiku-4.5", -- GPT model to use, 'gpt-3.5-turbo', 'gpt-4', or 'gpt-4o'
       temperature = 0.1,
-      sticky = { "#buffer", "#gitdiff", "#gitdiff:staged" },
+      sticky = { "#selection" }, -- , "#gitdiff", "#gitdiff:staged" },
       window = {
         layout = "vertical",
         width = 0.5,
