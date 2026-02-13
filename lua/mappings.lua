@@ -153,7 +153,8 @@ end, { desc = "Telescope Fuzzy Search" })
 map("n", "<leader>dl", function()
   -- recursively look for launch.json files in root directory and pass the first one to load_launchjs
   local project_root_dir = vim.fn.getcwd()
-  local launch_json = vim.fn.systemlist("find " .. project_root_dir .. " -name launch.json")[1]
+  local launch_json =
+    vim.fn.systemlist([[find . -name "launch.json" | awk '{ print length, $0 }' | sort -n | cut -d" " -f2-]])[1]
   vim.diagnostic.reset()
 
   if launch_json ~= nil then
