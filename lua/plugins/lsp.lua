@@ -136,9 +136,6 @@ return {
         },
         completion = {
           ghost_text = { enabled = false },
-          list = {
-            selection = { preselect = false },
-          },
         },
         keymap = {
           ["<Tab>"]   = { "select_next", "fallback" },
@@ -149,10 +146,7 @@ return {
     end,
   },
 
-  {
-    "rcarriga/cmp-dap",
-    config = function() end,
-  },
+  { "rcarriga/cmp-dap" },
 
   -- NvChad blink spec + disabled NvChad defaults (replaced by blink.cmp)
   { import = "nvchad.blink.lazyspec" },

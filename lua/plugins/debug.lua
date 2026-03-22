@@ -85,14 +85,6 @@ return {
         end
       end
 
-      -- Enable wrap for dapui elements
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "dapui_console", "dap-repl" },
-        callback = function()
-          vim.wo.wrap = true
-        end,
-      })
-
       -- Multiline input float for dap-repl
       -- <S-CR> is indistinguishable from <CR> in prompt buffers (terminal limitation),
       -- so <C-e> is used instead (unambiguous in all terminals).

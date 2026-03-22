@@ -11,26 +11,6 @@ map("n", "<leader>dB", function()
   require("dap").set_breakpoint(vim.fn.input "Breakpoint condition: ")
 end, { desc = "DAP Conditional Breakpoint" })
 
-map("n", "<leader>dp", function()
-  require("dap").continue()
-end, { desc = "DAP Continue" })
-
-map("n", "<leader>di", function()
-  require("dap").step_into()
-end, { desc = "DAP Step into" })
-
-map("n", "<leader>dn", function()
-  require("dap").step_over()
-end, { desc = "DAP Step over" })
-
-map("n", "<leader>do", function()
-  require("dap").step_out()
-end, { desc = "DAP Step out" })
-
-map("n", "<leader>dt", function()
-  require("dap").terminate()
-end, { desc = "DAP Terminate" })
-
 map("n", "<leader>dc", function()
   require("dapui").close()
 end, { desc = "DAP Close window" })
@@ -76,10 +56,6 @@ end, { desc = "DAP Restart" })
 map("n", "<leader>def", function()
   require("dapui").float_element(nil, { enter = true })
 end, { desc = "DAP Floating inspect" })
-
-map("n", "m", function()
-  require("dapui").eval()
-end, { desc = "DAP Evaluate expression" })
 
 map("n", "<leader>du", function()
   require("dapui").toggle { reset = true }

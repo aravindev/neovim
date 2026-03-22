@@ -31,19 +31,19 @@ end, { desc = "LSP Add Workspace Folder" })
 
 -- Telescope LSP
 map("n", "<leader>f?", function()
-  require("telescope.builtin").diagnostics { layout_strategy = "vertical" }
+  require("telescope.builtin").diagnostics()
 end, { desc = "Telescope LSP Diagnostics" })
 
 map("n", "<leader>fr", function()
-  require("telescope.builtin").lsp_references { layout_strategy = "vertical" }
+  require("telescope.builtin").lsp_references()
 end, { desc = "Telescope LSP References" })
 
 map("n", "<leader>fd", function()
-  require("telescope.builtin").lsp_definitions { layout_strategy = "vertical" }
+  require("telescope.builtin").lsp_definitions()
 end, { desc = "Telescope LSP Definitions" })
 
 map("n", "<leader>fs", function()
-  require("telescope.builtin").lsp_dynamic_workspace_symbols { layout_strategy = "vertical" }
+  require("telescope.builtin").lsp_dynamic_workspace_symbols()
 end, { desc = "Telescope LSP Workspace Symbols" })
 
 -- Provider memory: remember the last K-selected provider per buffer.
