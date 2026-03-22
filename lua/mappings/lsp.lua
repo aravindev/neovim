@@ -19,6 +19,11 @@ map("n", "<leader>td", function()
   vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end, { desc = "LSP Toggle Diagnostics" })
 
+map("n", "<leader>tf", function()
+  vim.g.disable_format_on_save = not vim.g.disable_format_on_save
+  vim.notify("Format on save " .. (vim.g.disable_format_on_save and "disabled" or "enabled"))
+end, { desc = "Toggle Format on Save" })
+
 map("n", "<leader>sw", function()
   local bufname = vim.fn.expand "%:p:h"
   vim.lsp.buf.add_workspace_folder(bufname)

@@ -1,5 +1,9 @@
 local map = vim.keymap.set
 
+-- Override <tab>/<S-tab> to suppress MRU reorder during buffer cycling
+map("n", "<tab>", function() require("configs.buf_order").nav_next() end, { desc = "buffer goto next" })
+map("n", "<S-tab>", function() require("configs.buf_order").nav_prev() end, { desc = "buffer goto prev" })
+
 map("n", ";", ":", { desc = "CMD enter command mode" })
 
 map("n", "<leader>x", function()

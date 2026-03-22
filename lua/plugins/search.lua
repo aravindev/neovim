@@ -44,6 +44,7 @@ return {
     opts = {},
     config = function()
       require("aerial").setup {
+        attach_mode = "global",
         filter_kind = {
           "Class",
           "Constructor",

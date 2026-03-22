@@ -118,3 +118,6 @@ vim.api.nvim_create_autocmd("BufEnter", {
 -- NvimTree: transparent background for readability
 vim.cmd [[hi NvimTreeNormal guibg=NONE ctermbg=NONE]]
 vim.cmd [[hi NvimTreeNormalNC guibg=NONE ctermbg=NONE]]
+
+-- MRU buffer ordering in tabufline
+require "configs.buf_order"

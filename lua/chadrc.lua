@@ -74,6 +74,7 @@ M.ui = {
   },
   tabufline = {
     lazyload = false,
+    bufwidth = 28,
   },
 }
 

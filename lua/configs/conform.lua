@@ -9,12 +9,12 @@ local options = {
     -- html = { "prettier" },
   },
 
-  format_on_save = {
-    -- These options will be passed to conform.format()
-    timeout_ms = 1000,
-    async = false,
-    lsp_format = "fallback",
-  },
+  format_on_save = function(_)
+    if vim.g.disable_format_on_save then
+      return nil
+    end
+    return { timeout_ms = 1000, async = false, lsp_format = "fallback" }
+  end,
   formatters = {
     black = {
       prepend_args = { "--line-length", "120", "--preview" },
