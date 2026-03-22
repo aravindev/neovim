@@ -29,10 +29,10 @@ return {
     "rmagatti/auto-session",
     lazy = false,
     keys = {
-      { "<leader>sr", "<cmd>SessionSearch<CR>",         desc = "Session search" },
-      { "<leader>ss", "<cmd>SessionSave<CR>",            desc = "Save session" },
-      { "<leader>st", "<cmd>SessionToggleAutoSave<CR>",  desc = "Toggle autosave" },
-      { "<leader>sd", "<cmd>SessionDelete<CR>",          desc = "Delete session" },
+      { "<leader>sr", "<cmd>SessionSearch<CR>",         desc = "Session Search" },
+      { "<leader>ss", "<cmd>AutoSession save<CR>",        desc = "Session Save" },
+      { "<leader>st", "<cmd>SessionToggleAutoSave<CR>",  desc = "Session Toggle Autosave" },
+      { "<leader>sd", "<cmd>SessionDelete<CR>",          desc = "Session Delete" },
     },
     ---@module "auto-session"
     ---@type AutoSession.Config

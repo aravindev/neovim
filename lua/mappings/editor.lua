@@ -1,8 +1,8 @@
 local map = vim.keymap.set
 
 -- Override <tab>/<S-tab> to suppress MRU reorder during buffer cycling
-map("n", "<tab>", function() require("configs.buf_order").nav_next() end, { desc = "buffer goto next" })
-map("n", "<S-tab>", function() require("configs.buf_order").nav_prev() end, { desc = "buffer goto prev" })
+map("n", "<tab>", function() require("configs.buf_order").nav_next() end, { desc = "Buffer Goto Next" })
+map("n", "<S-tab>", function() require("configs.buf_order").nav_prev() end, { desc = "Buffer Goto Prev" })
 
 map("n", ";", ":", { desc = "CMD enter command mode" })
 
@@ -23,7 +23,8 @@ map("n", "<leader>x", function()
   end
   if #windows == 1 and current_win == leftmost_win then
     if #buffers > 1 then
-      vim.cmd "bp|bd #"
+      vim.cmd "bp"
+      pcall(vim.cmd, "bd " .. bufnr)
     else
       vim.cmd "bd"
     end
@@ -32,7 +33,7 @@ map("n", "<leader>x", function()
   else
     vim.cmd "bd"
   end
-end, { noremap = true, silent = true, desc = "Close buffer or split" })
+end, { noremap = true, silent = true, desc = "Buffer Close or Split" })
 
 map({ "n", "i" }, "<F12>", function()
   require("maximizer").toggle()

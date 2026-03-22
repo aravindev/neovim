@@ -30,8 +30,20 @@ local function start_lazygit()
   }
 end
 
-map("n", "<leader>gg", start_lazygit, { desc = "Git Open Lazygit" })
+map("n", "<leader>gg", start_lazygit, { desc = "GIT Open Lazygit" })
 
 map("n", "<leader>dd", function()
   vim.cmd "DiffOrig"
-end, { desc = "Git buffer diff to write" })
+end, { desc = "GIT Buffer diff to write" })
+
+map("n", "<leader>gh", function()
+  vim.cmd "DiffviewFileHistory %"
+end, { desc = "GIT File history" })
+
+map("n", "<leader>gH", function()
+  require("git_utils").open_file_at_commit()
+end, { desc = "GIT Open file at commit" })
+
+map("n", "<leader>gD", function()
+  require("git_utils").diff_with_ref()
+end, { desc = "GIT Diff with branch/commit" })

@@ -1,10 +1,10 @@
 local map = vim.keymap.set
 
 -- Basic LSP mappings
-map("n", "<leader>rn", vim.lsp.buf.rename,      { desc = "Rename Symbol" })
-map("n", "<leader>gd", vim.lsp.buf.definition,  { desc = "Goto Definition" })
-map("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
-map("n", "<leader>fc", vim.lsp.buf.format,      { desc = "Format Code" })
+map("n", "<leader>rn", vim.lsp.buf.rename,      { desc = "LSP Rename Symbol" })
+map("n", "<leader>gd", vim.lsp.buf.definition,  { desc = "LSP Goto Definition" })
+map("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "LSP Code Action" })
+map("n", "<leader>fc", vim.lsp.buf.format,      { desc = "LSP Format Code" })
 
 -- Diagnostics
 map("n", "]d", function()
@@ -22,7 +22,7 @@ end, { desc = "LSP Toggle Diagnostics" })
 map("n", "<leader>tf", function()
   vim.g.disable_format_on_save = not vim.g.disable_format_on_save
   vim.notify("Format on save " .. (vim.g.disable_format_on_save and "disabled" or "enabled"))
-end, { desc = "Toggle Format on Save" })
+end, { desc = "LSP Toggle Format on Save" })
 
 map("n", "<leader>sw", function()
   local bufname = vim.fn.expand "%:p:h"
@@ -108,7 +108,7 @@ map("n", "K", function()
       cycle_to_provider(bufnr, memory.id, 8)
     end
   end
-end, { desc = "hover.nvim" })
+end, { desc = "LSP Hover" })
 
 -- Mouse hover disabled to avoid interference with K hover
 -- vim.o.mousemoveevent = true
