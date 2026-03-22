@@ -92,6 +92,18 @@ return {
           vim.wo.wrap = true
         end,
       })
+
+      -- Multiline input float for dap-repl
+      -- <S-CR> is indistinguishable from <CR> in prompt buffers (terminal limitation),
+      -- so <C-e> is used instead (unambiguous in all terminals).
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "dap-repl",
+        callback = function(ev)
+          local opts = { buffer = ev.buf }
+          local open = function() require("configs.dap_multiline").open() end
+          vim.keymap.set({ "n", "i" }, "<C-e>", open, opts)
+        end,
+      })
     end,
   },
 
