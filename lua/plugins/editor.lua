@@ -39,8 +39,17 @@ return {
     opts = {
       pre_save_cmds = {
         function()
-          local ok, dapui = pcall(require, "dapui")
-          if ok then pcall(dapui.close) end
+          local ok_dap, dap = pcall(require, "dap")
+          if ok_dap then pcall(dap.terminate) end
+          local ok_ui, dapui = pcall(require, "dapui")
+          if ok_ui then pcall(dapui.close) end
+          -- Wipe terminal buffers: sessions can't restore `buftype=terminal`
+          for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+            if vim.api.nvim_buf_is_valid(buf)
+              and vim.api.nvim_get_option_value("buftype", { buf = buf }) == "terminal" then
+              pcall(vim.api.nvim_buf_delete, buf, { force = true })
+            end
+          end
         end,
       },
       session_lens = {

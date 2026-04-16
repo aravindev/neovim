@@ -57,8 +57,8 @@ vim.lsp.config.pyright = {
 
 -- Clangd
 vim.lsp.config.clangd = {
-  cmd = { "clangd", "--clang-tidy", "--background-index", "--offset-encoding=utf-8", "--cross-file-rename" },
-  root_markers = { ".clangd", ".compile_commands.json" },
+  cmd = { "clangd", "--clang-tidy", "--background-index", "--offset-encoding=utf-8", "--cross-file-rename", "-j=4" },
+  root_markers = { ".clangd", "compile_commands.json" },
   filetypes = { "c", "cpp" },
 }
 
@@ -78,4 +78,69 @@ end
 
 vim.lsp.enable(servers)
 
--- read :h vim.lsp.config for changing options of lsp servers
+-- :MergeCompileCommands [container_path]
+-- Merges per-package compile_commands.json from build/*/ into one at workspace root.
+-- If container_path is given, remaps those paths to the current cwd.
+local merge_script = vim.fn.stdpath "config" .. "/scripts/merge_compile_commands.py"
+vim.api.nvim_create_user_command("MergeCompileCommands", function(opts)
+  local workspace = vim.fn.getcwd()
+  local cmd = { "python3", merge_script, "--workspace", workspace }
+  if opts.args ~= "" then
+    table.insert(cmd, "--container-path")
+    table.insert(cmd, opts.args)
+  end
+  vim.fn.jobstart(cmd, {
+    stdout_buffered = true,
+    stderr_buffered = true,
+    on_stdout = function(_, data)
+      if data and data[1] ~= "" then
+        vim.schedule(function() vim.notify(table.concat(data, "\n"), vim.log.levels.INFO) end)
+      end
+    end,
+    on_stderr = function(_, data)
+      if data and data[1] ~= "" then
+        vim.schedule(function() vim.notify(table.concat(data, "\n"), vim.log.levels.ERROR) end)
+      end
+    end,
+    on_exit = function(_, code)
+      if code == 0 then
+        vim.schedule(function()
+          vim.notify("Restarting clangd...", vim.log.levels.INFO)
+          for _, client in ipairs(vim.lsp.get_clients { name = "clangd" }) do
+            client:stop()
+          end
+          vim.defer_fn(function()
+            if vim.api.nvim_buf_get_name(0) ~= "" then
+              vim.cmd "e"
+            end
+          end, 500)
+        end)
+      end
+    end,
+  })
+end, { nargs = "?", desc = "Merge compile_commands.json and optionally remap container paths" })
+
+-- :GenerateClangd
+-- Writes a .clangd config file at cwd for clangd to find the compilation database
+-- and suppress missing system header errors.
+vim.api.nvim_create_user_command("GenerateClangd", function()
+  local clangd_config = table.concat({
+    "CompileFlags:",
+    "  CompilationDatabase: .",
+    "Diagnostics:",
+    "  Suppress:",
+    '    - "pp_file_not_found"',
+    "Index:",
+    "  Background: Build",
+    "",
+  }, "\n")
+  local filepath = vim.fn.getcwd() .. "/.clangd"
+  local f = io.open(filepath, "w")
+  if f then
+    f:write(clangd_config)
+    f:close()
+    vim.notify("Created " .. filepath, vim.log.levels.INFO)
+  else
+    vim.notify("Failed to write " .. filepath, vim.log.levels.ERROR)
+  end
+end, { desc = "Generate .clangd config at workspace root" })

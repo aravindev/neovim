@@ -6,7 +6,6 @@ local M = {}
 
 local type_to_ft = {
   python   = "python",
-  cppdbg   = "cpp",
   codelldb = "cpp",
 }
 

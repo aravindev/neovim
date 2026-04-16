@@ -1,6 +1,17 @@
 return {
-  { "mfussenegger/nvim-dap" },
-
+  {
+    "mfussenegger/nvim-dap",
+    dependencies = {
+      "rcarriga/nvim-dap-ui",
+    },
+    config = function()
+      local dap = require "dap"
+      dap.adapters.codelldb = {
+        type = "executable",
+        command = vim.fn.stdpath "data" .. "/mason/packages/codelldb/extension/adapter/codelldb",
+      }
+    end,
+  },
   {
     "mfussenegger/nvim-dap-python",
     ft = "python",
@@ -41,17 +52,17 @@ return {
         layouts = {
           {
             elements = {
-              { id = "scopes",      size = 0.45 },
+              { id = "scopes", size = 0.45 },
               { id = "breakpoints", size = 0.15 },
-              { id = "stacks",      size = 0.25 },
-              { id = "watches",     size = 0.15 },
+              { id = "stacks", size = 0.25 },
+              { id = "watches", size = 0.15 },
             },
             size = 0.25,
             position = "left",
           },
           {
             elements = {
-              { id = "repl",    size = 0.3 },
+              { id = "repl", size = 0.3 },
               { id = "console", size = 0.7 },
             },
             size = 0.25,
@@ -92,7 +103,9 @@ return {
         pattern = "dap-repl",
         callback = function(ev)
           local opts = { buffer = ev.buf }
-          local open = function() require("configs.dap_multiline").open() end
+          local open = function()
+            require("configs.dap_multiline").open()
+          end
           vim.keymap.set({ "n", "i" }, "<C-e>", open, opts)
         end,
       })

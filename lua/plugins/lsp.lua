@@ -1,6 +1,7 @@
 return {
   {
     "neovim/nvim-lspconfig",
+    lazy = false,
     config = function()
       require "configs.lspconfig"
     end,
@@ -18,6 +19,7 @@ return {
         "black",
         "isort",
         "debugpy",
+        "codelldb",
       }
       for _, package in ipairs(packages) do
         local registry = require "mason-registry"
@@ -136,11 +138,14 @@ return {
         },
         completion = {
           ghost_text = { enabled = false },
+          list = {
+            selection = { preselect = false, auto_insert = true },
+          },
         },
         keymap = {
           ["<Tab>"]   = { "select_next", "fallback" },
           ["<S-Tab>"] = { "select_prev", "fallback" },
-          ["<CR>"]    = { "accept", "fallback" },
+          ["<CR>"]    = { "fallback" },
         },
       }
     end,
