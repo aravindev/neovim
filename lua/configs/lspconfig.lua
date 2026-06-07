@@ -78,15 +78,15 @@ end
 
 vim.lsp.enable(servers)
 
--- :MergeCompileCommands [container_path]
+-- :MergeCompileCommands [pkg1,pkg2,...]
 -- Merges per-package compile_commands.json from build/*/ into one at workspace root.
--- If container_path is given, remaps those paths to the current cwd.
+-- If a comma-separated package list is given, only those packages are included.
 local merge_script = vim.fn.stdpath "config" .. "/scripts/merge_compile_commands.py"
 vim.api.nvim_create_user_command("MergeCompileCommands", function(opts)
   local workspace = vim.fn.getcwd()
   local cmd = { "python3", merge_script, "--workspace", workspace }
   if opts.args ~= "" then
-    table.insert(cmd, "--container-path")
+    table.insert(cmd, "--packages")
     table.insert(cmd, opts.args)
   end
   vim.fn.jobstart(cmd, {
@@ -118,7 +118,35 @@ vim.api.nvim_create_user_command("MergeCompileCommands", function(opts)
       end
     end,
   })
-end, { nargs = "?", desc = "Merge compile_commands.json and optionally remap container paths" })
+end, {
+  nargs = "?",
+  desc = "Merge compile_commands.json, optionally filtered to a package list",
+  complete = function(arg_lead)
+    local build_dir = vim.fn.getcwd() .. "/build"
+    local pkgs = {}
+    for _, ccj in ipairs(vim.fn.glob(build_dir .. "/*/compile_commands.json", false, true)) do
+      table.insert(pkgs, vim.fn.fnamemodify(ccj, ":h:t"))
+    end
+    table.sort(pkgs)
+
+    -- Split on the last comma so prior packages stay verbatim
+    local prefix, partial = arg_lead:match "^(.*,)(.*)$"
+    prefix = prefix or ""
+    partial = partial or arg_lead
+    local already = {}
+    for p in prefix:gmatch "[^,]+" do
+      already[p] = true
+    end
+
+    local matches = {}
+    for _, p in ipairs(pkgs) do
+      if not already[p] and vim.startswith(p, partial) then
+        table.insert(matches, prefix .. p)
+      end
+    end
+    return matches
+  end,
+})
 
 -- :GenerateClangd
 -- Writes a .clangd config file at cwd for clangd to find the compilation database

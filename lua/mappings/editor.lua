@@ -22,7 +22,10 @@ map("n", "<leader>x", function()
     end
   end
   if #windows == 1 and current_win == leftmost_win then
-    if #buffers > 1 then
+    local tab_bufs = vim.t.bufs or {}
+    if #tab_bufs <= 1 and #vim.api.nvim_list_tabpages() > 1 then
+      vim.cmd "tabclose"
+    elseif #buffers > 1 then
       vim.cmd "bp"
       pcall(vim.cmd, "bd " .. bufnr)
     else

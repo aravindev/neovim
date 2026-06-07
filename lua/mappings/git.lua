@@ -16,18 +16,35 @@ local function start_lazygit()
   require("nvchad.term").toggle {
     id = "lazygit",
     pos = "float",
-    float = {
+    float_opts = {
       relative = "editor",
-      row = 0.1,
-      col = 0.045,
-      width = 0.9,
-      height = 0.8,
+      row = 0.01,
+      col = 0.01,
+      width = 0.98,
+      height = 0.95,
       border = "single",
     },
-    size = 0.8,
+    size = 0.95,
     cmd = "lazygit -w " .. git_root .. " && exit",
     clear_cmd = true,
   }
+
+  local buf = vim.api.nvim_get_current_buf()
+  local win = vim.api.nvim_get_current_win()
+  vim.api.nvim_create_autocmd("TermClose", {
+    buffer = buf,
+    once = true,
+    callback = function()
+      vim.schedule(function()
+        if vim.api.nvim_win_is_valid(win) then
+          vim.api.nvim_win_close(win, true)
+        end
+        if vim.api.nvim_buf_is_valid(buf) then
+          vim.api.nvim_buf_delete(buf, { force = true })
+        end
+      end)
+    end,
+  })
 end
 
 map("n", "<leader>gg", start_lazygit, { desc = "GIT Open Lazygit" })

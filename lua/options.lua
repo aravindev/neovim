@@ -22,4 +22,7 @@ vim.g.clipboard = {
   },
 }
 
+-- Treat C++ template implementation files (.tpp) as cpp, ROS .launch as xml.
+vim.filetype.add { extension = { tpp = "cpp", launch = "xml" } }
+
 vim.cmd [[command! DiffOrig if &diff | diffupdate | else | vert new | set buftype=nofile | read ++edit # | 0d_ | diffthis | wincmd p | diffthis | wincmd p | set wrap | endif]]
