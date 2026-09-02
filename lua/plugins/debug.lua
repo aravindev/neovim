@@ -71,10 +71,27 @@ return {
         },
       }
 
+      -- Soft-wrap in dap-ui windows
+      local function enable_dapui_wrap()
+        for _, win in ipairs(vim.api.nvim_list_wins()) do
+          if vim.api.nvim_win_is_valid(win) then
+            local buf = vim.api.nvim_win_get_buf(win)
+            local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
+            if ft:match "^dapui_" or ft == "dap-repl" then
+              vim.api.nvim_set_option_value("wrap", true, { win = win })
+            end
+          end
+        end
+      end
+      vim.api.nvim_create_autocmd("BufWinEnter", {
+        callback = vim.schedule_wrap(enable_dapui_wrap),
+      })
+
       dap.listeners.after.event_initialized.dapui_config = function()
         dapui.open { reset = true }
         -- Auto-focus the console window on session start
         vim.schedule(function()
+          enable_dapui_wrap()
           for _, win in ipairs(vim.api.nvim_list_wins()) do
             local buf = vim.api.nvim_win_get_buf(win)
             if vim.api.nvim_get_option_value("filetype", { buf = buf }) == "dapui_console" then
