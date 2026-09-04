@@ -1,6 +1,6 @@
 require("nvchad.configs.lspconfig").defaults()
 
-local servers = { "pyright", "clangd" }
+local servers = { "pyright", "clangd", "texlab", "harper_ls" }
 
 local util = require "lspconfig/util"
 local path = util.path
@@ -60,6 +60,27 @@ vim.lsp.config.clangd = {
   cmd = { "clangd", "--clang-tidy", "--background-index", "--offset-encoding=utf-8", "--cross-file-rename", "-j=4" },
   root_markers = { ".clangd", "compile_commands.json" },
   filetypes = { "c", "cpp" },
+}
+
+-- Texlab: LSP features only. vimtex builds and views, conform formats.
+vim.lsp.config.texlab = {
+  settings = {
+    texlab = {
+      build = { onSave = false },
+      latexFormatter = "none",
+    },
+  },
+}
+
+-- Harper: prose only. Upstream default covers ~30 filetypes including cpp and python.
+vim.lsp.config.harper_ls = {
+  filetypes = { "tex", "markdown" },
+  settings = {
+    ["harper-ls"] = {
+      userDictPath = vim.fn.stdpath "config" .. "/harper-dict.txt",
+      dialect = "American",
+    },
+  },
 }
 
 -- We do this for UFO which takes care of folding

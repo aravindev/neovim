@@ -5,6 +5,7 @@ local options = {
     yaml = { "prettier" },
     markdown = { "prettier" },
     cpp = { "clang_format" },
+    tex = { "tex-fmt" },
     -- css = { "prettier" },
     -- html = { "prettier" },
   },
@@ -21,6 +22,10 @@ local options = {
     },
     isort = {
       prepend_args = { "--profile", "black", "--filter-files" },
+    },
+    -- Default is 80. Matched to black above.
+    ["tex-fmt"] = {
+      prepend_args = { "--wraplen", "120" },
     },
   },
 }

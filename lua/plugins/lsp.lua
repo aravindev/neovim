@@ -20,6 +20,9 @@ return {
         "isort",
         "debugpy",
         "codelldb",
+        "texlab",
+        "harper-ls",
+        "tex-fmt",
       }
       for _, package in ipairs(packages) do
         local registry = require "mason-registry"
