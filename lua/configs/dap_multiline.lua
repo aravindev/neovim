@@ -164,7 +164,7 @@ function M.open()
     close_wins(wins)
   end
 
-  local opts = { buffer = buf, nowait = true }
+  local opts = { buf = buf, nowait = true }
   vim.keymap.set({ "n", "i" }, "<C-CR>", execute_and_close, opts)
   vim.keymap.set("n",          "<CR>",   execute_and_close, opts)
   -- <Esc> in insert mode → normal mode (default vim, do NOT discard)

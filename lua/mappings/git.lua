@@ -32,7 +32,7 @@ local function start_lazygit()
   local buf = vim.api.nvim_get_current_buf()
   local win = vim.api.nvim_get_current_win()
   vim.api.nvim_create_autocmd("TermClose", {
-    buffer = buf,
+    buf = buf,
     once = true,
     callback = function()
       vim.schedule(function()

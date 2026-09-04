@@ -119,7 +119,7 @@ return {
       vim.api.nvim_create_autocmd("FileType", {
         pattern = "dap-repl",
         callback = function(ev)
-          local opts = { buffer = ev.buf }
+          local opts = { buf = ev.buf }
           local open = function()
             require("configs.dap_multiline").open()
           end
