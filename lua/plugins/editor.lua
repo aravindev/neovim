@@ -7,21 +7,41 @@ return {
 
   {
     "nvim-treesitter/nvim-treesitter",
-    run = ":TSUpdate",
+    branch = "main",
+    lazy = false,
+    build = ":TSUpdate",
     config = function()
-      require("nvim-treesitter.configs").setup {
-        ensure_installed = {
-          "diff",
-          "python",
-          "cpp",
-          "lua",
-          "markdown",
-          "comment",
-        },
-        highlight = {
-          enable = true,
-        },
+      local ts = require "nvim-treesitter"
+      ts.setup()
+
+      local ensure_installed = {
+        "diff",
+        "python",
+        "cpp",
+        "lua",
+        "markdown",
+        "markdown_inline",
+        "comment",
+        "luadoc",
+        "printf",
       }
+      local installed = ts.get_installed "parsers"
+      local missing = vim.tbl_filter(function(lang)
+        return not vim.tbl_contains(installed, lang)
+      end, ensure_installed)
+      if #missing > 0 then
+        ts.install(missing)
+      end
+
+      vim.api.nvim_create_autocmd("FileType", {
+        group = vim.api.nvim_create_augroup("UserTreesitterStart", { clear = true }),
+        callback = function(args)
+          local lang = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype)
+          if lang and vim.treesitter.language.add(lang) then
+            pcall(vim.treesitter.start, args.buf, lang)
+          end
+        end,
+      })
     end,
   },
 

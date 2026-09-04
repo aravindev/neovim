@@ -9,18 +9,21 @@ if vim.env.SHELL == nil or vim.env.SHELL == "/bin/sh" then
   vim.o.shell = "bash"
 end
 
--- Use OSC 52 for clipboard
-vim.g.clipboard = {
-  name = "OSC 52",
-  copy = {
-    ["+"] = require("vim.ui.clipboard.osc52").copy "+",
-    ["*"] = require("vim.ui.clipboard.osc52").copy "*",
-  },
-  paste = {
-    ["+"] = require("vim.ui.clipboard.osc52").paste "+",
-    ["*"] = require("vim.ui.clipboard.osc52").paste "*",
-  },
-}
+-- Use OSC 52 for clipboard, but only when there is no local X/Wayland clipboard to talk to.
+local has_local_clipboard = (vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY) ~= nil
+if vim.env.SSH_TTY ~= nil or not has_local_clipboard then
+  vim.g.clipboard = {
+    name = "OSC 52",
+    copy = {
+      ["+"] = require("vim.ui.clipboard.osc52").copy "+",
+      ["*"] = require("vim.ui.clipboard.osc52").copy "*",
+    },
+    paste = {
+      ["+"] = require("vim.ui.clipboard.osc52").paste "+",
+      ["*"] = require("vim.ui.clipboard.osc52").paste "*",
+    },
+  }
+end
 
 -- Treat C++ template implementation files (.tpp) as cpp, ROS .launch as xml.
 vim.filetype.add { extension = { tpp = "cpp", launch = "xml" } }
